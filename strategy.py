@@ -179,21 +179,20 @@ class GuardedPancakeswapV3LpStrategy(IntentStrategy):
             return self._swap_intent(self.token0_address, self.token1_address, pepe_usd - maximum_pepe_usd)
 
         lp_budget = min(total_usd * self.max_lp_allocation, total_usd * (Decimal("1") - self.reserve))
-        leg_usd = lp_budget / Decimal("2")
         if lp_budget <= 0:
             return Intent.hold(reason="LP allocation is zero after reserve requirement")
 
-        if pepe_usd < leg_usd:
-            required = leg_usd - pepe_usd
-            if pepe_usd + required > maximum_pepe_usd or stable_usd - required < leg_usd:
-                return Intent.hold(reason="Cannot acquire PEPE LP leg within reserve and concentration limits")
-            return self._swap_intent(self.token1_address, self.token0_address, required)
-        if stable_usd < leg_usd:
-            required = leg_usd - stable_usd
-            if pepe_usd - required < leg_usd:
-                return Intent.hold(reason="Cannot acquire BSC-USD LP leg while preserving LP inventory")
-            return self._swap_intent(self.token0_address, self.token1_address, required)
+        target_leg_usd = lp_budget / Decimal("2")
+        if pepe_usd <= 0:
+            if stable_usd < target_leg_usd:
+                return Intent.hold(reason="Cannot acquire a positive PEPE LP leg from available BSC-USD")
+            return self._swap_intent(self.token1_address, self.token0_address, target_leg_usd)
+        if stable_usd <= 0:
+            if pepe_usd - target_leg_usd < 0:
+                return Intent.hold(reason="Cannot acquire a positive BSC-USD LP leg from available PEPE")
+            return self._swap_intent(self.token0_address, self.token1_address, target_leg_usd)
 
+        leg_usd = min(pepe_usd, stable_usd, target_leg_usd)
         return self._open_intent(pepe_price, stable_price, leg_usd)
 
     def _open_intent(self, pepe_price: Decimal, stable_price: Decimal, leg_usd: Decimal) -> AnyIntent:

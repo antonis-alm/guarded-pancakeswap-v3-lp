@@ -119,6 +119,22 @@ class TestCapitalAndEntryGuards:
         assert intent.max_price_impact == Decimal("0.0075")
         assert intent.swap_params == {"fee_tier": 2500}
 
+    def test_entry_uses_smaller_available_leg_without_exact_balance(self):
+        strategy = _strategy()
+        intent = strategy.decide(_market(pepe_usd=Decimal("2.49"), stable_usd=Decimal("2.51")))
+
+        assert _kind(intent) == "LP_OPEN"
+        assert intent.amount0 == Decimal("249")
+        assert intent.amount1 == Decimal("2.49")
+
+    def test_entry_caps_available_leg_at_configured_lp_budget(self):
+        strategy = _strategy(max_lp_allocation_pct=80)
+        intent = strategy.decide(_market(pepe_usd=Decimal("2.49"), stable_usd=Decimal("2.51")))
+
+        assert _kind(intent) == "LP_OPEN"
+        assert intent.amount0 == Decimal("200")
+        assert intent.amount1 == Decimal("2")
+
     @pytest.mark.parametrize(
         ("volatility", "expected"),
         [(Decimal("0.12"), "LP_OPEN"), (Decimal("0.120001"), "HOLD")],
