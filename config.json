@@ -1,0 +1,43 @@
+{
+  "chain": "bsc",
+  "protocol": "pancakeswap_v3",
+  "pool_address": "0xbba8f85c3ceddf73db4de17d31608d640eaea416",
+  "fee_tier": 2500,
+  "token0_symbol": "PEPE",
+  "token0_address": "0x25d887ce7a35172c62febfd67a1856f20faebb00",
+  "token0_decimals": 18,
+  "token1_symbol": "BSC-USD",
+  "token1_address": "0x55d398326f99059ff775485246999027b3197955",
+  "token1_decimals": 18,
+  "max_lp_allocation_pct": 100,
+  "reserve_pct": 0,
+  "max_portfolio_pepe_pct": 50,
+  "range_width_pct": 20,
+  "recenter_interval_hours": 24,
+  "max_one_hour_realized_volatility_pct": 12,
+  "range_escape_minutes": 45,
+  "volatility_exit_multiplier": 2,
+  "max_swap_price_impact_bps": 75,
+  "max_slippage_bps": 100,
+  "max_rebalances_per_day": 1,
+  "force_action": "",
+  "force_position_id": null,
+  "token_funding": [
+    {
+      "symbol": "PEPE",
+      "address": "0x25d887ce7a35172c62febfd67a1856f20faebb00",
+      "amount": "2.5",
+      "amount_type": "usd"
+    },
+    {
+      "symbol": "BSC-USD",
+      "address": "0x55d398326f99059ff775485246999027b3197955",
+      "amount": "2.5",
+      "amount_type": "usd"
+    }
+  ],
+  "anvil_funding": {
+    "0x25d887ce7a35172c62febfd67a1856f20faebb00": 1000000,
+    "0x55d398326f99059ff775485246999027b3197955": 1000
+  }
+}
